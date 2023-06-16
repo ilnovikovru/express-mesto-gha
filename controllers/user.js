@@ -6,16 +6,15 @@ module.exports.updateProfile = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
-    .then(user => {
+    .then((user) => {
       if (!user) {
         return next({ status: 404, message: 'Пользователь не найден' });
-      } else {
-        res.status(200).send(user);
       }
+      return res.status(200).send(user);
     })
-    .catch(err => {
+    .catch((err) => {
       if (err.name === 'ValidationError') {
         next({ status: 400, message: 'Переданы некорректные данные при обновлении профиля' });
       } else if (err.name === 'CastError') {
@@ -32,16 +31,15 @@ module.exports.updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
-    .then(user => {
+    .then((user) => {
       if (!user) {
         return next({ status: 404, message: 'Пользователь не найден' });
-      } else {
-        res.status(200).send(user);
       }
+      return res.status(200).send(user);
     })
-    .catch(err => {
+    .catch((err) => {
       if (err.name === 'ValidationError') {
         next({ status: 400, message: 'Переданы некорректные данные при обновлении аватара' });
       } else if (err.name === 'CastError') {

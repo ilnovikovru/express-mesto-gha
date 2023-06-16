@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
@@ -7,24 +8,24 @@ const cardSchema = new Schema({
     type: String,
     required: true,
     minlength: 2,
-    maxlength: 30
+    maxlength: 30,
   },
   link: {
     type: String,
-    required: true
+    required: true,
   },
   owner: {
     type: ObjectId,
-    required: true
+    required: true,
   },
   likes: {
     type: [ObjectId],
-    default: []
+    default: [],
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 const Card = mongoose.model('card', cardSchema);
