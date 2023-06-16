@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const User = require('../models/user');
 const { updateProfile, updateAvatar } = require('../controllers/user');
@@ -10,14 +11,24 @@ router.get('/users', (req, res) => {
 });
 
 router.get('/users/:userId', (req, res) => {
-  User.findById(req.params.userId).select('name about avatar _id')
+  const userId = req.params.userId;
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: 'Некорректный id пользователя' });
+  }
+
+  User.findById(userId).select('name about avatar _id')
     .then(user => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь не найден' });
       }
       res.status(200).send(user);
     })
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка', error: err }));
+    .catch(err => {
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Некорректный id пользователя' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка', error: err });
+    });
 });
 
 router.post('/users', (req, res) => {
@@ -25,7 +36,12 @@ router.post('/users', (req, res) => {
   const user = new User({ name, about, avatar });
   user.save()
     .then(newUser => res.status(201).send(newUser))
-    .catch(err => res.status(400).send({ message: 'Произошла ошибка', error: err }));
+    .catch(err => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка валидации', error: err });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка', error: err });
+    });
 });
 
 router.patch('/users/me', updateProfile);
