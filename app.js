@@ -18,9 +18,20 @@ app.use((req, res, next) => {
 app.use(userRoutes);
 app.use(cardRoutes);
 
+app.use((req, res, next) => {
+  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+});
+
 app.use((err, req, res, next) => {
-  const { status = 500, message = 'Произошла ошибка' } = err;
-  res.status(status).send({ message });
+  const { status = 500, message } = err;
+
+  if (err.name === 'ValidationError') {
+    res.status(400).send({ message: 'Некорректные данные' });
+  } else if (status === 404) {
+    res.status(404).send({ message: 'Ресурс не найден' });
+  } else {
+    res.status(status).send({ message: message || 'Произошла ошибка' });
+  }
 });
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', { useNewUrlParser: true, useUnifiedTopology: true })
