@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
+const UnauthorizedError = require('../errors/UnauthorizedError');
+
 const JWT_SECRET = 'secret-key';
 
 exports.getUsers = (req, res, next) => {
@@ -24,7 +26,9 @@ exports.getUserById = [
     return User.findById(userId).select('name about avatar _id')
       .then((user) => {
         if (!user) {
-          return res.status(404).send({ message: 'Пользователь не найден' });
+          return res.status(404).send({
+            message: 'Пользователь не найден',
+          });
         }
         return res.status(200).send(user);
       })
@@ -79,13 +83,13 @@ exports.login = [
     return User.findOne({ email }).select('+password')
       .then((user) => {
         if (!user) {
-          return next(new Error('Неправильные почта или пароль'));
+          throw new UnauthorizedError('Неправильные почта или пароль');
         }
 
         return bcrypt.compare(password, user.password)
           .then((matched) => {
             if (!matched) {
-              return next(new Error('Неправильные почта или пароль'));
+              throw new UnauthorizedError('Неправильные почта или пароль');
             }
 
             return user;
