@@ -5,13 +5,14 @@ const { login, createUser } = require('./controllers/user');
 const userRoutes = require('./routes/user');
 const cardRoutes = require('./routes/card');
 const auth = require('./middlewares/auth');
+const { signinValidation, signupValidation } = require('./validators');
 
 const app = express();
 
 app.use(express.json());
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', signinValidation, login);
+app.post('/signup', signupValidation, createUser);
 
 app.use(auth);
 app.use(userRoutes);
