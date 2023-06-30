@@ -1,20 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { login, createUser } = require('./controllers/user');
 const userRoutes = require('./routes/user');
 const cardRoutes = require('./routes/card');
+const auth = require('./middlewares/auth');
 
 const app = express();
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '648b880a5c484558d4dd1804',
-  };
+app.post('/signin', login);
+app.post('/signup', createUser);
 
-  next();
-});
-
+app.use(auth);
 app.use(userRoutes);
 app.use(cardRoutes);
 
@@ -25,14 +23,18 @@ app.use((req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  const { status = 500, message } = err;
+  const { status = 500, message, code } = err;
 
   if (err.name === 'ValidationError') {
     res.status(400).send({ message: 'Некорректные данные' });
+  } else if (err.name === 'CastError') {
+    res.status(400).send({ message: 'Некорректный идентификатор' });
+  } else if (code === 11000) {
+    res.status(409).send({ message: 'Такой пользователь уже существует' });
   } else if (status === 404) {
     res.status(404).send({ message: 'Ресурс не найден' });
   } else {
-    res.status(status).send({ message: message || 'Произошла ошибка' });
+    res.status(status).send({ message: message || 'Произошла ошибка на сервере' });
   }
 });
 
