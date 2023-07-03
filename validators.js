@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const validateObjId = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().required().custom((value, helpers) => {
+    userId: Joi.string().required().custom((value, helpers) => {
       if (mongoose.Types.ObjectId.isValid(value)) {
         return value;
       }
