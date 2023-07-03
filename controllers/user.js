@@ -1,4 +1,4 @@
-const { check, validationResult } = require('express-validator');
+const { check, validationResult, param } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
@@ -14,7 +14,7 @@ exports.getUsers = (req, res, next) => {
 };
 
 exports.getUserById = [
-  check('userId').isMongoId().withMessage('Некорректный id пользователя'),
+  param('userId').isMongoId().withMessage('Некорректный id пользователя'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
