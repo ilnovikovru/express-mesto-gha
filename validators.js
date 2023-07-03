@@ -48,9 +48,17 @@ const signupValidation = celebrate({
   }),
 });
 
+const validateUserUpdate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30).required(),
+    about: Joi.string().min(2).max(30).required(),
+  }),
+});
+
 module.exports = {
   validateObjId,
   validateCard,
   signinValidation,
   signupValidation,
+  validateUserUpdate,
 };

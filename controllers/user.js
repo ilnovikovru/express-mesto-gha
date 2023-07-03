@@ -66,6 +66,25 @@ exports.createUser = [
   },
 ];
 
+exports.updateUserInfo = (req, res, next) => {
+  const { name, about } = req.body;
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    { new: true, runValidators: true },
+  )
+    .then((user) => {
+      if (!user) {
+        throw new Error('Пользователь не найден');
+      }
+      res.send(user);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 exports.login = [
   check('email').isEmail().withMessage('Некорректный формат почты'),
   check('password').isLength({ min: 8 }).withMessage('Пароль должен быть длиной не менее 8 символов'),
