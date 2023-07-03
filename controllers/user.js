@@ -37,9 +37,6 @@ exports.getUserById = [
 ];
 
 exports.createUser = [
-  check('name').isLength({ min: 2, max: 30 }).withMessage('Имя должно быть от 2 до 30 символов'),
-  check('about').isLength({ min: 2, max: 30 }).withMessage('Должно быть от 2 до 30 символов'),
-  check('avatar').isURL().withMessage('Укажите ссылку на аватар'),
   check('email').isEmail().withMessage('Укажите правильный адрес электронной почты'),
   check('password').isLength({ min: 8 }).withMessage('Пароль должен быть от 8 символов'),
   (req, res, next) => {
@@ -49,7 +46,7 @@ exports.createUser = [
     }
 
     const {
-      name, about, avatar, email, password,
+      name = '', about = '', avatar = '', email, password,
     } = req.body;
 
     return bcrypt.hash(password, 10)
