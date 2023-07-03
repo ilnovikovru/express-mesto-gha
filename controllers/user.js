@@ -45,10 +45,8 @@ exports.createUser = [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    console.log(req.body);
-
     let {
-      name = '', about = '', avatar = '', email, password,
+      name, about, avatar, email, password
     } = req.body;
 
     return bcrypt.hash(password, 10)
