@@ -15,7 +15,13 @@ const validateObjId = celebrate({
 const validateCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().uri(),
+    link: Joi.string().required().custom((value, helpers) => {
+      const urlPattern = new RegExp(/^(https?:\/\/)(www\.)?([\w-]+)\.([\w-]+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/);
+      if (!urlPattern.test(value)) {
+        return helpers.message('Некорректный URL');
+      }
+      return value;
+    }),
   }),
 });
 
