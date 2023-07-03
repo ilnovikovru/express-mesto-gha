@@ -7,6 +7,8 @@ const cardRoutes = require('./routes/card');
 const auth = require('./middlewares/auth');
 const { signinValidation, signupValidation } = require('./validators');
 
+const UnauthorizedError = require('./errors/UnauthorizedError');
+
 const app = express();
 
 app.use(express.json());
@@ -27,18 +29,20 @@ app.use(errors());
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  const { status = 500, message, code } = err;
+  const { statusCode = 500, message, code } = err;
 
-  if (err.name === 'ValidationError') {
+  if (err instanceof UnauthorizedError) {
+    res.status(err.statusCode).send({ message: err.message });
+  } else if (err.name === 'ValidationError') {
     res.status(400).send({ message: 'Некорректные данные' });
   } else if (err.name === 'CastError') {
     res.status(400).send({ message: 'Некорректный идентификатор' });
   } else if (code === 11000) {
     res.status(409).send({ message: 'Такой пользователь уже существует' });
-  } else if (status === 404) {
+  } else if (statusCode === 404) {
     res.status(404).send({ message: 'Ресурс не найден' });
   } else {
-    res.status(status).send({ message: message || 'Произошла ошибка на сервере' });
+    res.status(statusCode).send({ message: message || 'Произошла ошибка на сервере' });
   }
 });
 
