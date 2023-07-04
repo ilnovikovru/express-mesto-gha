@@ -1,8 +1,8 @@
 const express = require('express');
 const {
-  getUsers, getUserById, getUserInfo, updateUserInfo,
+  getUsers, getUserById, getUserInfo, updateUserInfo, updateAvatar,
 } = require('../controllers/user');
-const { validateObjId, validateUserUpdate } = require('../validators');
+const { validateObjId, validateUserUpdate, validateAvatarUpdate } = require('../validators');
 
 const router = express.Router();
 
@@ -11,5 +11,6 @@ router.get('/users/me', getUserInfo);
 router.get('/users/:userId', validateObjId, getUserById);
 
 router.patch('/users/me', validateUserUpdate, updateUserInfo);
+router.patch('/users/me/avatar', validateAvatarUpdate, updateAvatar);
 
 module.exports = router;

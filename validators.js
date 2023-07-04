@@ -55,10 +55,23 @@ const validateUserUpdate = celebrate({
   }),
 });
 
+const validateAvatarUpdate = celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().uri().required().custom((value, helpers) => {
+      const urlPattern = new RegExp(/^(https?:\/\/)(www\.)?([\w-]+)\.([\w-]+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/);
+      if (!urlPattern.test(value)) {
+        return helpers.message('Некорректный URL');
+      }
+      return value;
+    }),
+  }),
+});
+
 module.exports = {
   validateObjId,
   validateCard,
   signinValidation,
   signupValidation,
   validateUserUpdate,
+  validateAvatarUpdate,
 };
