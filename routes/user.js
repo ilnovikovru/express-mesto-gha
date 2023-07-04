@@ -8,9 +8,8 @@ const router = express.Router();
 
 router.get('/users', getUsers);
 router.get('/users/me', getUserInfo);
-router.get('/users/:userId', validateObjId, getUserById);
-
 router.patch('/users/me', validateUserUpdate, updateUserInfo);
 router.patch('/users/me/avatar', validateAvatarUpdate, updateAvatar);
+router.get('/users/:userId', validateObjId, getUserById);
 
 module.exports = router;
