@@ -14,16 +14,16 @@ exports.getUsers = (req, res, next) => {
 };
 
 exports.getUserById = [
-  param('userId').isMongoId().withMessage('Некорректный id пользователя'),
+  param('id').isMongoId().withMessage('Некорректный id пользователя'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { userId } = req.params;
+    const { id } = req.params;
 
-    return User.findById(userId).select('name about avatar _id')
+    return User.findById(id).select('name about avatar _id')
       .then((user) => {
         if (!user) {
           return res.status(404).send({
