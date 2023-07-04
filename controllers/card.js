@@ -17,10 +17,10 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  const { cardId } = req.params;
+  const { id } = req.params;
   const userId = req.user._id;
 
-  Card.findById(cardId)
+  Card.findById(id)
     .then((card) => {
       if (!card) {
         return next(new NotFoundError('Карточка не найдена'));
@@ -37,13 +37,13 @@ module.exports.deleteCard = (req, res, next) => {
 
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
     .then((card) => {
       if (!card) {
-        return next({ status: 404, message: 'Карточка не найдена' });
+        return next(new NotFoundError('Карточка не найдена'));
       }
       return res.status(200).send(card);
     })
@@ -52,13 +52,13 @@ module.exports.likeCard = (req, res, next) => {
 
 module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $pull: { likes: req.user._id } },
     { new: true },
   )
     .then((card) => {
       if (!card) {
-        return next({ status: 404, message: 'Карточка не найдена' });
+        return next(new NotFoundError('Карточка не найдена'));
       }
       return res.status(200).send(card);
     })
