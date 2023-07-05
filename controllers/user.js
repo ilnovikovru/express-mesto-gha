@@ -1,10 +1,10 @@
-const { check, validationResult, param } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const NotFoundError = require('../errors/NotFoundError');
+const BadRequestError = require('../errors/BadRequestError');
 
 const JWT_SECRET = 'secret-key';
 
@@ -98,7 +98,7 @@ exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.status(200).send(user);
     })
@@ -115,18 +115,18 @@ module.exports.updateProfile = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        return next({ status: 404, message: 'Пользователь не найден' });
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next({ status: 400, message: 'Переданы некорректные данные при обновлении профиля' });
+        throw new BadRequestError('Переданы некорректные данные при обновлении профиля');
       }
       if (err.name === 'CastError') {
-        return next({ status: 400, message: 'Передан некорректный идентификатор пользователя' });
+        throw new BadRequestError('Передан некорректный идентификатор пользователя');
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -142,17 +142,17 @@ module.exports.updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        return next({ status: 404, message: 'Пользователь не найден' });
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next({ status: 400, message: 'Переданы некорректные данные при обновлении аватара' });
+        throw new BadRequestError('Переданы некорректные данные при обновлении аватара');
       }
       if (err.name === 'CastError') {
-        return next({ status: 400, message: 'Передан некорректный идентификатор пользователя' });
+        throw new BadRequestError('Передан некорректный идентификатор пользователя');
       }
-      return next(err);
+      next(err);
     });
 };
