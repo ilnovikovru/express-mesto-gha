@@ -8,8 +8,6 @@ const auth = require('./middlewares/auth');
 const { signinValidation, signupValidation } = require('./validators');
 
 const UnauthorizedError = require('./errors/UnauthorizedError');
-const NotFoundError = require('./errors/NotFoundError');
-const ForbiddenError = require('./errors/ForbiddenError');
 
 const app = express();
 
@@ -35,14 +33,12 @@ app.use((err, req, res, next) => {
 
   if (err instanceof UnauthorizedError) {
     res.status(err.statusCode).send({ message: err.message });
-  } else if (err instanceof ForbiddenError) {
-    res.status(err.statusCode).send({ message: err.message });
-  } else if (err instanceof NotFoundError) {
-    res.status(err.statusCode).send({ message: err.message });
   } else if (err.name === 'ValidationError') {
     res.status(400).send({ message: 'Некорректные данные' });
   } else if (err.name === 'CastError') {
     res.status(400).send({ message: 'Некорректный идентификатор' });
+  } else if (err.name === 'NotFoundError') {
+    res.status(404).send({ message: err.message || 'Ресурс не найден' });
   } else if (code === 11000) {
     res.status(409).send({ message: 'Такой пользователь уже существует' });
   } else {
