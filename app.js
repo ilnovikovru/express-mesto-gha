@@ -37,10 +37,10 @@ app.use((err, req, res, next) => {
     res.status(400).send({ message: 'Некорректные данные' });
   } else if (err.name === 'CastError') {
     res.status(400).send({ message: 'Некорректный идентификатор' });
+  } else if (err.name === 'NotFoundError') {
+    res.status(404).send({ message: err.message || 'Ресурс не найден' });
   } else if (code === 11000) {
     res.status(409).send({ message: 'Такой пользователь уже существует' });
-  } else if (statusCode === 404) {
-    res.status(404).send({ message: 'Ресурс не найден' });
   } else {
     res.status(statusCode).send({ message: message || 'Произошла ошибка на сервере' });
   }
