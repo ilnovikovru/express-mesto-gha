@@ -4,7 +4,6 @@ const { errors } = require('celebrate');
 
 const NotFoundError = require('./errors/NotFoundError');
 const routes = require('./routes');
-const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 
@@ -16,7 +15,13 @@ app.use((req, res, next) => {
 });
 
 app.use(errors());
-app.use(errorHandler);
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Произошла ошибка на сервере';
+  res.status(statusCode).send({ message });
+});
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
