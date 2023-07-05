@@ -6,10 +6,10 @@ const User = require('../models/user');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
 const JWT_SECRET = 'secret-key';
-
+// поправил
 exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.send(users))
     .catch(next);
 };
 
