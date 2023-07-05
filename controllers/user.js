@@ -5,6 +5,7 @@ const User = require('../models/user');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
+const ConflictError = require('../errors/ConflictError');
 
 const JWT_SECRET = 'secret-key';
 
@@ -45,7 +46,15 @@ exports.createUser = (req, res, next) => {
       avatar: newUser.avatar,
       email: newUser.email,
     }))
-    .catch((err) => next(err));
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с данным email уже существует'));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(', ')}`));
+      } else {
+        next(err);
+      }
+    });
 };
 
 exports.updateUserInfo = (req, res, next) => {
