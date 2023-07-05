@@ -10,6 +10,6 @@ router.get('/users', getUsers);
 router.get('/users/me', getUserInfo);
 router.patch('/users/me', validateUserUpdate, updateUserInfo);
 router.patch('/users/me/avatar', validateAvatarUpdate, updateAvatar);
-router.get('/users/:userId', validateObjId, getUserById);
+router.get('/users/:id', validateObjId, getUserById);
 
 module.exports = router;
