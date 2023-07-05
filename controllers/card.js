@@ -23,15 +23,20 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById(id)
     .then((card) => {
       if (!card) {
-        return next(new NotFoundError('Карточка не найдена'));
+        throw new NotFoundError('Карточка не найдена');
       }
       if (card.owner.toString() !== userId) {
-        return next(new ForbiddenError('Недостаточно прав для удаления карточки'));
+        throw new ForbiddenError('Недостаточно прав для удаления карточки');
       }
 
-      return Card.deleteOne(card);
+      return Card.deleteOne({ _id: card._id });
     })
-    .then(() => res.status(200).send({ message: 'Карточка удалена' }))
+    .then((result) => {
+      if (result.deletedCount === 0) {
+        throw new NotFoundError('Карточка уже была удалена');
+      }
+      res.status(200).send({ message: 'Карточка удалена' });
+    })
     .catch(next);
 };
 
