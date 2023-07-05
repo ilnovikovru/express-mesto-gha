@@ -13,28 +13,20 @@ exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
-exports.getUserById = [
-  param('id').isMongoId().withMessage('Некорректный id пользователя'),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+exports.getUserById = (req, res, next) => {
+  const { id } = req.params;
 
-    const { id } = req.params;
-
-    return User.findById(id).select('name about avatar _id')
-      .then((user) => {
-        if (!user) {
-          return res.status(404).send({
-            message: 'Пользователь не найден',
-          });
-        }
-        return res.status(200).send(user);
-      })
-      .catch(next);
-  },
-];
+  User.findById(id).select('name about avatar _id')
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({
+          message: 'Пользователь не найден',
+        });
+      }
+      return res.status(200).send(user);
+    })
+    .catch(next);
+};
 
 exports.createUser = [
   check('email').isEmail().withMessage('Укажите правильный адрес электронной почты'),
