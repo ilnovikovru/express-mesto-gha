@@ -33,7 +33,7 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .then((result) => {
       if (result.deletedCount === 0) {
-        throw new NotFoundError('Карточка уже была удалена');
+        throw new NotFoundError('Карточка не найдена или уже была удалена');
       }
       res.status(200).send({ message: 'Карточка удалена' });
     })
