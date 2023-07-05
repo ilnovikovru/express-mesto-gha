@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const UnauthorizedError = require('../errors/UnauthorizedError');
+const NotFoundError = require('../errors/NotFoundError');
 
 const JWT_SECRET = 'secret-key';
 
@@ -19,9 +20,7 @@ exports.getUserById = (req, res, next) => {
   User.findById(id).select('name about avatar _id')
     .then((user) => {
       if (!user) {
-        return res.status(404).send({
-          message: 'Пользователь не найден',
-        });
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.status(200).send(user);
     })
