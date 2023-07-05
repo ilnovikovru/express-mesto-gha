@@ -13,6 +13,13 @@ const cardSchema = new Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator(v) {
+        const urlRegex = /(http|https):\/\/\w*.\w*/;
+        return urlRegex.test(v);
+      },
+      message: 'Введите корректный URL',
+    },
   },
   owner: {
     type: ObjectId,
