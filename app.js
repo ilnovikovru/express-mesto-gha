@@ -8,6 +8,8 @@ const auth = require('./middlewares/auth');
 const { signinValidation, signupValidation } = require('./validators');
 
 const UnauthorizedError = require('./errors/UnauthorizedError');
+const NotFoundError = require('./errors/NotFoundError');
+const ForbiddenError = require('./errors/ForbiddenError');
 
 const app = express();
 
