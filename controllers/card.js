@@ -1,7 +1,8 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
-// поправил
+const BadRequestError = require('../errors/BadRequestError');
+
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
@@ -13,7 +14,8 @@ module.exports.createCard = (req, res, next) => {
       } else {
         next(err);
       }
-});
+    });
+};
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
