@@ -1,15 +1,27 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const { login, createUser } = require('./controllers/user');
+const userRoutes = require('./routes/user');
+const cardRoutes = require('./routes/card');
+const auth = require('./middlewares/auth');
+const { signinValidation, signupValidation } = require('./validators');
 
+const UnauthorizedError = require('./errors/UnauthorizedError');
 const NotFoundError = require('./errors/NotFoundError');
-const routes = require('./routes');
 
 const app = express();
 
 app.use(express.json());
-app.use(routes);
 
+app.post('/signin', signinValidation, login);
+app.post('/signup', signupValidation, createUser);
+
+app.use(auth);
+app.use(userRoutes);
+app.use(cardRoutes);
+
+// eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
   next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });
