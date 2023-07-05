@@ -7,7 +7,6 @@ const cardRoutes = require('./routes/card');
 const auth = require('./middlewares/auth');
 const { signinValidation, signupValidation } = require('./validators');
 
-const UnauthorizedError = require('./errors/UnauthorizedError');
 const NotFoundError = require('./errors/NotFoundError');
 
 const app = express();

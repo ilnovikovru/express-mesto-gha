@@ -139,8 +139,6 @@ module.exports.updateProfile = (req, res, next) => {
     });
 };
 
-const urlRegex = /^(https?:\/\/)(www\.)?([\w-]+)\.([\w-]+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/;
-
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
