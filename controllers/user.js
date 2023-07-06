@@ -67,12 +67,16 @@ exports.updateUserInfo = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new Error('Пользователь не найден');
+        throw new NotFoundError('Пользователь не найден');
       }
       res.send(user);
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при обновлении профиля'));
+      } else {
+        next(err);
+      }
     });
 };
 
