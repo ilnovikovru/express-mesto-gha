@@ -128,17 +128,18 @@ module.exports.updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь не найден');
+        next(new NotFoundError('Пользователь не найден'));
+      } else {
+        res.send(user);
       }
-      return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при обновлении аватара');
+        next(new BadRequestError('Переданы некорректные данные при обновлении аватара'));
+      } else if (err.name === 'CastError') {
+        next(new BadRequestError('Передан некорректный идентификатор пользователя'));
+      } else {
+        next(err);
       }
-      if (err.name === 'CastError') {
-        throw new BadRequestError('Передан некорректный идентификатор пользователя');
-      }
-      next(err);
     });
 };
