@@ -118,31 +118,6 @@ exports.getUserInfo = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.updateProfile = (req, res, next) => {
-  const { name, about } = req.body;
-
-  User.findByIdAndUpdate(
-    req.user._id,
-    { name, about },
-    { new: true, runValidators: true },
-  )
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден');
-      }
-      return res.status(200).send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при обновлении профиля');
-      }
-      if (err.name === 'CastError') {
-        throw new BadRequestError('Передан некорректный идентификатор пользователя');
-      }
-      next(err);
-    });
-};
-
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
